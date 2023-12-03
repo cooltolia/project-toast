@@ -18,18 +18,35 @@ const ICONS_BY_VARIANT = {
   error: AlertOctagon,
 };
 
-function Toast() {
+function Toast({ variant, message, handleClose }) {
+  const Icon = ICONS_BY_VARIANT[variant];
+
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      handleClose();
+    }, 10000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [handleClose]);
+
   return (
-    <div className={`${styles.toast} ${styles.notice}`}>
+    <div className={`${styles.toast} ${styles[variant]}`}>
       <div className={styles.iconContainer}>
-        <Info size={24} />
+        <Icon size={24} />
       </div>
       <p className={styles.content}>
-        16 photos have been uploaded
+        <VisuallyHidden>{variant} – </VisuallyHidden>
+        {message}
       </p>
-      <button className={styles.closeButton}>
+      <button
+        className={styles.closeButton}
+        onClick={handleClose}
+        aria-label='Dismiss message'
+        aria-live='off'
+      >
         <X size={24} />
-        <VisuallyHidden>Dismiss message</VisuallyHidden>
       </button>
     </div>
   );
